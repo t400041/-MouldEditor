@@ -31,8 +31,9 @@
               <option value="discover">发现</option>
             </select>
           </div>
-          <div class="saveBtn" @click="submit">
-            <i class="fa fa-save"></i>
+          <div class="saveBtn row als" @click="submit">
+            <i class="fa fa-upload"></i>
+            <span>提交</span>
           </div>
         </div>
 
@@ -98,7 +99,7 @@
                         @contextmenu="openMenu($event, index2, item)"
                       >
                         <div v-if="!item2.tip">
-                          <div
+                          <!-- <div
                             class="toolType toolSlider"
                             v-if="item2.type === 1"
                             @click="uploadDialog(item2, 'slider')"
@@ -115,14 +116,21 @@
                               </div>
                             </div>
                             <p style="margin: 0" v-else>轮播图</p>
+                          </div> -->
+                          <div v-if="item2.type === 1" @click="uploadDialog(item2, 'slider')">
+                            <slider
+                              :list="item2"
+                            >
                           </div>
+                          
+                          </slider>
                           <div class="toolType row" v-if="item2.type === 2">
                             <div
                               class="imgBox"
                               v-for="(item3, index3) in item2.items"
                               @click="uploadDialog(item3, 'img')"
                               :key="'item3' + index3"
-                              :style="{width: (item3.col / 0.6) + '%',height: (item3.height) + 'px',margin: 2 + 'px'}"
+                              :style="{width: (item3.col / 0.6) + '%', margin: 2 + 'px'}"
                             >
                               <!-- <input class="imgInput" type="file" accept="image/*" @change="uploadImg(item3, $event)"> -->
                               <img :src="item3.img" alt="" v-if="item3.img" />
@@ -200,9 +208,12 @@
       <tip-modal :show="tipModalShow" :msg="tipModalMsg" @confirm="closeTip">
       </tip-modal>
     </div>
-
+    <!-- 弹窗组件 -->
     <script src="./js/modalComponent.js"></script>
+    <!-- 提示框组件 -->
     <script src="./js/tipModal.js"></script>
+    <!-- 轮播图组件 -->
+    <script src="./js/slider.js"></script>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
@@ -243,7 +254,8 @@
               tip: '从右侧工具栏添加组件到此处'
             },
             tipModalShow: false,
-            tipModalMsg: ''
+            tipModalMsg: '',
+            noUrl: []
           }
         },
         computed: {
@@ -263,9 +275,6 @@
           tipIndex() {
             return this.editeSection[0].components.indexOf(this.tipComponent[0])
           }
-          // newTool() {
-          //   return tools
-          // }
         },
         mounted() {
           // window.addEventListener('contextmenu', this.openMenu)
@@ -316,13 +325,11 @@
             // 在编辑状态的栏目中添加元素
             // console.log(this.itemList);
             if (this.itemList.length === 0) {
-              this.tipModalShow = true
-              this.tipModalMsg = '请先新增栏目'
+              this.openTip('请先新增栏目')
               return false
             }
             if (this.editeSection.length === 0) {
-              this.tipModalShow = true
-              this.tipModalMsg = '请先选择需要编辑的栏目'
+              this.openTip('请先选择需要编辑的栏目')
               return false
             }
 
@@ -426,7 +433,9 @@
             this.modalType = type
             if (type === 'slider') {
               this.sliderList.push({
-                img: ''
+                img: '',
+                width: '',
+                height: ''
               })
             }
             // console.log(item)
@@ -456,6 +465,7 @@
                 if (type === 'img') {
                   this.imgUrl = r.data.path
                   imgOb.onload = () => {
+                    console.log(document.getElementById('viewImg').width)
                     this.imgHeight = document.getElementById('viewImg').height
                     this.imgWith = document.getElementById('viewImg').width
                   }
@@ -463,6 +473,8 @@
                 } else {
                   this.sliderList[this.sliderList.length - 1].img = r.data.path
                   imgOb.onload = () => {
+                    this.sliderList[this.sliderList.length - 1].width = document.getElementsByClassName('viewSlider')[0].width
+                    this.sliderList[this.sliderList.length - 1].height = document.getElementsByClassName('viewSlider')[0].height
                     // this.sliderWidth = document.getElementById('viewImg').width
                     // this.sliderHeight = document.getElementById('viewImg').height
                     this.sliderList.push({
@@ -490,7 +502,7 @@
               this.imgUrl = ''
             } else {
               this.sliderList.pop()
-              console.log(this.sliderList)
+              // console.log(this.sliderList)
               this.modalItem.items = this.sliderList.map(item => {
                 return {
                   img: item.img,
@@ -513,8 +525,14 @@
           },
           submit() {
             this.saveSectionBtn()
+            this.checkImgUrl()
+            
             if (!this.pageType) {
               this.openTip('请选择页面模板类型！')
+              return false
+            }
+            if (this.noUrl.length > 0) {
+              this.openTip('请确保所有组件都上传了图片！')
               return false
             }
             var subMap = []
@@ -554,6 +572,19 @@
           },
           closeTip() {
             this.tipModalShow = false
+          },
+          checkImgUrl() {
+            // return this.itemList
+            for (sections of this.itemList) {
+              // console.log(sections)
+              for (item of sections.components) {
+                // console.log(item.items)
+                this.noUrl = item.items.filter(i => {
+                  // console.log(i.img)
+                  return i.img === '' || i.img === null
+                })
+              }
+            }
           }
         }
       })

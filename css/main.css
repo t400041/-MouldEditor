@@ -116,10 +116,11 @@ i {
   height: 45px;
   width: 45px;
   line-height: 44px;
-  font-size: 28px;
+  font-size: 30px;
+  font-weight: 600;
   text-align: center;
   padding: 0 8px;
-  background-color: #0060ce;
+  background-color: #1890ff;
   border-radius: 23px;
   position: absolute;
   left: 50%;
@@ -157,6 +158,7 @@ i {
 .imgBox img {
   width: 100%;
   height: auto;
+  display: block;
 }
 
 section{
@@ -166,7 +168,7 @@ section{
   overflow: hidden;
 }
 section.border{
-  border: dashed 1px #0060ce;
+  border: dashed 1px #1890ff;
   border-radius: 5px;
 }
 
@@ -186,7 +188,7 @@ section.border{
   text-align: center;
 }
 .confBtn{
-  background-color: #0060ce;
+  background-color: #1890ff;
   color: #fff;
 }
 .cansBtn{
@@ -350,7 +352,7 @@ section.border{
 }
 .sliderItem{
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   transition: all ease-in-out 1s;
   position: absolute;
   left: 0;
@@ -360,7 +362,7 @@ section.border{
 .sliderItem img{
   width: 100%;
   height: auto;
-  
+  display: block;
 }
 .sliderItem.show{
   opacity: 1;
@@ -381,12 +383,17 @@ section.border{
 }
 
 .saveBtn{
-  width: 35px;
+  /* width: 35px; */
   height: 35px;
+  padding: 0 8px ;
+  background-color: #1890ff;
+  color: #fff;
   cursor: pointer;
-  
+  border-radius: 5px;
+  font-size: 15px;
 }
 .saveBtn i {
-  font-size: 28px;
-  color: #0060ce;
+  font-size: 20px;
+  color: #fff;
+  margin-right: 6px;
 }
