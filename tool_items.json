@@ -1,0 +1,264 @@
+[
+  {
+    "type": 1,
+    "top": 15,
+    "bottom": 15,
+    "space": 0,
+    "items": [
+      {
+        "col": 60,
+        "width": 320,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 12,
+        "width": 60,
+        "height": 60,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 12,
+        "width": 12,
+        "height": 60,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 12,
+        "width": 60,
+        "height": 60,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 12,
+        "width": 60,
+        "height": 60,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 12,
+        "width": 60,
+        "height": 60,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 15,
+        "width": 80,
+        "height": 100,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 15,
+        "width": 80,
+        "height": 100,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 15,
+        "width": 80,
+        "height": 100,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 15,
+        "width": 80,
+        "height": 100,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 20,
+        "width": 110,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 40,
+        "width": 210,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 40,
+        "width": 210,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 20,
+        "width": 110,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 60,
+        "width": 320,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 30,
+        "width": 160,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 15,
+        "width": 80,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 15,
+        "width": 80,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 15,
+        "width": 80,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 15,
+        "width": 80,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 30,
+        "width": 160,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 30,
+        "width": 160,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 30,
+        "width": 160,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  },
+  {
+    "type": 2,
+    "top": 0,
+    "bottom": 15,
+    "space": 5,
+    "items": [
+      {
+        "col": 20,
+        "width": 106,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 20,
+        "width": 106,
+        "height": 110,
+        "img": "",
+        "data": {}
+      },
+      {
+        "col": 20,
+        "width": 106,
+        "height": 110,
+        "img": "",
+        "data": {}
+      }
+    ]
+  }
+]

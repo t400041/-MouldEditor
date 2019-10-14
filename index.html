@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>编辑器</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/fontawesome/css/font-awesome.css">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+
+  <body>
+    <div class="viewBox row spa" id="app">
+      <div class="pannelBox" v-cloak>
+        <div class="row pannelHead als spb">
+          <h3>编辑面板</h3>
+          <div class="row als">
+            <h5>选择模板类型:</h5>
+            <select
+              class="pageType"
+              placeholder="选择模板类型"
+              name=""
+              id=""
+              v-model="pageType"
+              @change="changePageType"
+            >
+              <option value="main">首页</option>
+              <option value="discover">发现</option>
+            </select>
+          </div>
+          <div class="saveBtn" @click="submit">
+            <i class="fa fa-save"></i>
+          </div>
+        </div>
+
+        <div class="pannel">
+          <div class="UI">
+            <div class="uHeader">
+              页头
+            </div>
+            <div class="scrollBox">
+              <div class="editorBody">
+                <div v-if="itemList.length">
+                  <section
+                    v-for="(item, index) in itemList"
+                    :key="'section' + index"
+                    :class="{border: item.isEdit}"
+                  >
+                    <div class="editeSection row ale">
+                      <div class="delete" @click="deleteSectionBtn(index)">
+                        <!-- <img src="./img/ic_delete@3x.png" alt="" /> -->
+                        <i class="fa fa-trash-o fa-lg"></i>
+                      </div>
+                      <div
+                        class="edit"
+                        v-if="!item.isEdit"
+                        @click="editeSectionBtn(item)"
+                      >
+                        <!-- <img src="./img/ic_edit@3x.png" alt="" /> -->
+                        <i class="fa fa-pencil fa-lg"></i>
+                      </div>
+                      <div class="save" v-else @click="saveSectionBtn(item)">
+                        <!-- <img src="./img/ic_save@3x.png" alt="" /> -->
+                        <i class="fa fa-save fa-lg"></i>
+                      </div>
+                    </div>
+
+                    <div class="inputBox row">
+                      <input
+                        type="text"
+                        v-if="item.isSetTitle"
+                        v-model="item.title"
+                      />
+                      <p class="" v-if="!item.isSetTitle">{{ item.title }}</p>
+                      <div
+                        class="btn confBtn"
+                        v-if="item.isSetTitle"
+                        @click="item.isSetTitle = false"
+                      >
+                        确认
+                      </div>
+                      <div
+                        class="btn confBtn"
+                        v-if="!item.isSetTitle && item.isEdit"
+                        @click="item.isSetTitle = true"
+                      >
+                        编辑
+                      </div>
+                    </div>
+
+                    <div class="sectionItems" v-if="item.components">
+                      <div
+                        v-for="(item2, index2) in item.components"
+                        :key="'item2' + index2"
+                        @contextmenu="openMenu($event, index2, item)"
+                      >
+                        <div v-if="!item2.tip">
+                          <div
+                            class="toolType toolSlider"
+                            v-if="item2.type === 1"
+                            @click="uploadDialog(item2, 'slider')"
+                          >
+                            <div v-if="item2.items.length > 1" :style="{height: item2.items[0].height + 'px'}">
+                              <div
+                                class="sliderItem"
+                                :class="{show: index3 === sliderShow}"
+                                :style="{height: item3.height + 'px'}"
+                                v-for="(item3, index3) in item2.items"
+                                :key="'slider' + index3"
+                              >
+                                <img :src="item3.img" alt="" />
+                              </div>
+                            </div>
+                            <p style="margin: 0" v-else>轮播图</p>
+                          </div>
+                          <div class="toolType row" v-if="item2.type === 2">
+                            <div
+                              class="imgBox"
+                              v-for="(item3, index3) in item2.items"
+                              @click="uploadDialog(item3, 'img')"
+                              :key="'item3' + index3"
+                              :style="{width: (item3.col / 0.6) + '%',height: (item3.height) + 'px',margin: 2 + 'px'}"
+                            >
+                              <!-- <input class="imgInput" type="file" accept="image/*" @change="uploadImg(item3, $event)"> -->
+                              <img :src="item3.img" alt="" v-if="item3.img" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tip" v-if="item2.tip">
+                          {{ item2.tip }}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <div class="addBtn" @click="addSection">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="toolBox">
+        <div class="pannelHead row als">
+          <h3>工具栏</h3>
+        </div>
+
+        <div class="tool">
+          <div
+            class=""
+            v-for="(item, index) in toolList"
+            :key="'tool1' + index"
+            @click="addItem(editeSection, item)"
+          >
+            <div class="toolType toolSlider" v-if="item.type === 1">
+              轮播图
+            </div>
+            <div class="toolType row" v-if="item.type === 2">
+              <div
+                class="imgBox"
+                v-for="(item2, index2) in item.items"
+                :key="'tool2' + index2"
+                :style="{width: (item2.col / 0.6) + '%',height: (item2.height) + 'px',margin: 2 + 'px'}"
+              >
+                <img :src="item2.img" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 右键菜单 -->
+      <div
+        class="rightMenu"
+        id="rightMenu"
+        v-if="menuShow"
+        :style="{left: menuPos.left, top: menuPos.top}"
+      >
+        <div @click="deleteItem()">删除此行</div>
+        <div @click="insertRrevious()">插入前一行</div>
+        <div @click="insertNext()">插入后一行</div>
+      </div>
+      <!-- toast -->
+      <div class="toast" v-if="toastShow">
+        {{ toastTxt }}
+      </div>
+      <!-- 上传图片弹窗 -->
+      <my-model
+        :show="modalShow"
+        :type="modalType"
+        :item="modalItem"
+        :imgurl="imgUrl"
+        :sliderlist="sliderList"
+        @cancel="modalCancal()"
+        @confirm="modalConfirm"
+        @upload="uploadImg"
+      ></my-model>
+      <!-- 提示弹窗 -->
+      <tip-modal :show="tipModalShow" :msg="tipModalMsg" @confirm="closeTip">
+      </tip-modal>
+    </div>
+
+    <script src="./js/modalComponent.js"></script>
+    <script src="./js/tipModal.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+      var Http = axios.create()
+      var mainUrl = 'http://172.22.211.106:32300'
+
+      var vm = new Vue({
+        el: '#app',
+        data() {
+          return {
+            title: '发现',
+            sliderShow: 0,
+            pageType: '',
+            itemList: [],
+            toolList: [],
+            toastTxt: '',
+            toastShow: false,
+            modalShow: false,
+            modalItem: null,
+            modalSilderShow: false,
+            indexInfo: '',
+            sliderList: [],
+            sliderWidth: '',
+            sliderHeight: '',
+            modalType: '',
+            imgUrl: '',
+            imgWith: '',
+            imgHeight: '',
+            rm: document.getElementById('rightMenu'),
+            menuShow: false,
+            menuPos: {
+              left: 0,
+              top: 0
+            },
+            itemChooseIndex: '',
+            tipItem: {
+              tip: '从右侧工具栏添加组件到此处'
+            },
+            tipModalShow: false,
+            tipModalMsg: ''
+          }
+        },
+        computed: {
+          // 找出可编辑栏目
+          editeSection() {
+            return this.itemList.filter(item => {
+              return item.isEdit === true
+            })
+          },
+          // 找出插入位置元素
+          tipComponent() {
+            return this.editeSection[0].components.filter(item => {
+              return item.tip
+            })
+          },
+          // 查询插入位置顺序值
+          tipIndex() {
+            return this.editeSection[0].components.indexOf(this.tipComponent[0])
+          }
+          // newTool() {
+          //   return tools
+          // }
+        },
+        mounted() {
+          // window.addEventListener('contextmenu', this.openMenu)
+          window.addEventListener('click', this.closeMenu)
+          this.getToolInfo()
+          // this.getData()
+        },
+        methods: {
+          // 从json获取工具列表
+          getToolInfo() {
+            Http.get('./tool_items.json').then(res => {
+              this.toolList = res.data
+            })
+          },
+          getData(type) {
+            Http.get(mainUrl + '/api/discover/query?type=' + type).then(res => {
+              var r = res.data
+              if (r.state === 0) {
+                this.itemList = r.data.config.map(item => {
+                  return {
+                    isEdit: false,
+                    isSetTitle: false,
+                    components: item.rows,
+                    title: item.title,
+                    height: item.height
+                  }
+                })
+              }
+            })
+          },
+          changePageType() {
+            // console.log(this.pageType)
+            this.getData(this.pageType)
+          },
+          addSection() {
+            // 新增栏目并赋予编辑状态
+            this.saveSectionBtn()
+            let newItem = {
+              isEdit: true,
+              isSetTitle: true,
+              components: [this.tipItem],
+              title: ''
+            }
+
+            this.itemList.push(newItem)
+          },
+          addItem(section, toolItem) {
+            // 在编辑状态的栏目中添加元素
+            // console.log(this.itemList);
+            if (this.itemList.length === 0) {
+              this.tipModalShow = true
+              this.tipModalMsg = '请先新增栏目'
+              return false
+            }
+            if (this.editeSection.length === 0) {
+              this.tipModalShow = true
+              this.tipModalMsg = '请先选择需要编辑的栏目'
+              return false
+            }
+
+            var newItem = JSON.parse(JSON.stringify(toolItem))
+            
+            section[0].components.splice(this.tipIndex, 0, newItem)
+            // console.log(this.itemList)
+          },
+          setItems(section, items) {
+            // console.log(items.items)
+            for (item in items.items) {
+              Vue.set(section, 'col', item.col)
+              Vue.set(section, 'width', item.width)
+              Vue.set(section, 'height', item.height)
+              Vue.set(section, 'img', item.img)
+            }
+            // console.log(section)
+          },
+          setTitle(item) {},
+          saveSectionBtn() {
+            // 保存编辑中的栏目 并取消编辑状态
+            if (this.editeSection[0]) {
+              var this_section = this.editeSection[0]
+              // console.log(this_section)
+              this_section.components.splice(this.tipIndex, 1)
+              this_section.isSetTitle = false
+              this_section.isEdit = false
+            }
+          },
+          editeSectionBtn(this_item) {
+            this.saveSectionBtn()
+            this_item.components.push(this.tipItem)
+            this_item.isEdit = true
+          },
+          deleteSectionBtn(index) {
+            // console.log(this.itemList)
+            // console.log(index)
+            this.itemList.splice(index, 1)
+          },
+          openMenu(e, index, item) {
+            // 右键菜单
+            if (!item.isEdit) {
+              return false
+            }
+            e = e || window.event
+
+            e.preventDefault()
+            // 鼠标位置
+            var mx = e.clientX
+            var my = e.clientY
+            // 右键菜单宽度
+            var rmWidth = 120
+            // console.log(rmWidth)
+            //网页的宽度(高度用同样的方法解决)
+            var pageWidth = document.body.clientWidth
+            // 右键菜单位置
+            this.menuPos.left = mx + 'px'
+
+            this.menuPos.top = my + 32 + 'px'
+
+            this.menuShow = true
+            // console.log(index)
+            this.itemChooseIndex = index
+
+            return false
+          },
+          closeMenu() {
+            // 关闭右键菜单
+            this.menuShow = false
+          },
+          deleteItem() {
+            // 删除元素
+            this.editeSection[0].components.splice(this.itemChooseIndex, 1)
+          },
+          changeTipIndex(index) {
+            // 改变插入位置
+            // console.log(this.editeSection[0].components)
+            this.editeSection[0].components.splice(this.tipIndex, 1)
+            this.editeSection[0].components.splice(index, 0, this.tipItem)
+          },
+          insertNext() {
+            // 插入后一行
+            if (this.itemChooseIndex < this.tipIndex) {
+              this.changeTipIndex(this.itemChooseIndex + 1)
+            } else {
+              this.changeTipIndex(this.itemChooseIndex)
+            }
+            
+          },
+          insertRrevious() {
+            // 插入前一行
+            if (this.itemChooseIndex < this.tipIndex) {
+              this.changeTipIndex(this.itemChooseIndex)
+            } else {
+              this.changeTipIndex(this.itemChooseIndex - 1)
+            }
+          },
+          uploadDialog(item, type) {
+            this.modalShow = true
+            this.modalItem = item
+            this.modalType = type
+            if (type === 'slider') {
+              this.sliderList.push({
+                img: ''
+              })
+            }
+            // console.log(item)
+          },
+
+          uploadImg(e, type) {
+            // var item = this.modalItem
+
+            var myFile = e.srcElement.files[0] //获取input输入的图片
+            // console.log(type)
+            var formData = new FormData()
+            formData.append('file', myFile)
+            // formData.append("name", "12345");
+            // console.log(formData.get('file'))
+            if (!/image\/\w+/.test(myFile.type)) {
+              // $.toast("请确保文件为图像类型", "forbidden")
+              return false
+            } //判断是否图片，在移动端由于浏览器对调用file类型处理不同，虽然加了accept = 'image/*'，但是还要再次判断
+            Http.post(mainUrl + '/api/discover/file', formData).then(res => {
+              const r = res.data
+              if (r.state === 0) {
+                this.toastShow = true
+                this.toastTxt = '上传成功'
+                
+                var imgOb = new Image()
+                imgOb.src = r.data.path
+                if (type === 'img') {
+                  this.imgUrl = r.data.path
+                  imgOb.onload = () => {
+                    this.imgHeight = document.getElementById('viewImg').height
+                    this.imgWith = document.getElementById('viewImg').width
+                  }
+                  
+                } else {
+                  this.sliderList[this.sliderList.length - 1].img = r.data.path
+                  imgOb.onload = () => {
+                    // this.sliderWidth = document.getElementById('viewImg').width
+                    // this.sliderHeight = document.getElementById('viewImg').height
+                    this.sliderList.push({
+                      img: '',
+                      width: document.getElementsByClassName('viewSlider')[0].width,
+                      height: document.getElementsByClassName('viewSlider')[0].height
+                    })
+                  }
+                  
+                }
+                setTimeout(() => {
+                  this.toastShow = false
+                }, 2000)
+              }
+            })
+          },
+          modalConfirm() {
+            this.modalShow = false
+
+            if (this.modalType === 'img') {
+              this.modalItem.img = this.imgUrl
+              this.modalItem.width = this.imgWith
+              this.modalItem.height = this.imgHeight
+              // item.img = this.imgUrl
+              this.imgUrl = ''
+            } else {
+              this.sliderList.pop()
+              console.log(this.sliderList)
+              this.modalItem.items = this.sliderList.map(item => {
+                return {
+                  img: item.img,
+                  col: 60,
+                  width: item.width,
+                  height: item.height,
+                  data: {}
+                }
+              })
+              this.sliderList = []
+            }
+          },
+          modalSliderConfirm() {
+            this.modalShow = false
+          },
+          modalCancal() {
+            this.modalShow = false
+            this.imgUrl = ''
+            this.sliderList = []
+          },
+          submit() {
+            this.saveSectionBtn()
+            if (!this.pageType) {
+              this.openTip('请选择页面模板类型！')
+              return false
+            }
+            var subMap = []
+            var mapItem = {
+              title: '',
+              height: 44,
+              rows: []
+            }
+            // console.log(this.itemList)
+
+            subMap = this.itemList.map(item => {
+              return {
+                title: item.title,
+                height: 44,
+                rows: item.components
+              }
+            })
+            var subData = {
+              type: this.pageType,
+              config: subMap
+            }
+            Http.post(mainUrl + '/api/discover/save', subData).then(res => {
+              var r = res.data
+              if (r.state === 0) {
+                this.toastShow = true
+                this.toastTxt = '提交成功'
+                setTimeout(() => {
+                  this.toastShow = false
+                }, 2000)
+              }
+            })
+            // console.log(subMap)
+          },
+          openTip(msg) {
+            this.tipModalShow = true
+            this.tipModalMsg = msg
+          },
+          closeTip() {
+            this.tipModalShow = false
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
